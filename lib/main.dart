@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
+import 'package:crud_standards/screens/user_page.dart';
+import 'package:crud_standards/screens/songs_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +19,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MainPage(),
+      //home: MainPage(),
+      //home: UserPage(),
+      home: SongsPage(),
     );
   }
 }
@@ -38,13 +43,12 @@ class _MainPageState extends State<MainPage> {
 
   Future createUser({required String name}) async {
     // Reference to document
-    final docUser = FirebaseFirestore.instance.collection('users').doc('my-id');
+    final docUser = FirebaseFirestore.instance.collection('users').doc();
 
-    final json = {
-      'name': name,
-      'age': 21,
-      'birthday': DateTime(2001, 7, 28),
-    };
+    final user = User(
+        id: docUser.id, name: name, age: 21, birthday: DateTime(2001, 7, 28));
+
+    final json = user.toJson();
 
     // Create document and write data to Firebase
     await docUser.set(json);
@@ -56,4 +60,25 @@ class MainPage extends StatefulWidget {
 
   @override
   _MainPageState createState() => _MainPageState();
+}
+
+class User {
+  String id;
+  final String name;
+  final int age;
+  final DateTime birthday;
+
+  User({
+    this.id = '',
+    required this.name,
+    required this.age,
+    required this.birthday,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'age': age,
+        'birthday': birthday,
+      };
 }
